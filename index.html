@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Wizard RPG: Knight Edition</title>
     <style>
         body {
@@ -10,7 +10,7 @@
             display: flex; justify-content: center; align-items: center;
             height: 100vh; background-color: #05050a;
             color: #e0e0e0; font-family: 'Tahoma', sans-serif;
-            overflow: hidden;
+            overflow: hidden; touch-action: none;
         }
 
         #game-container {
@@ -20,6 +20,63 @@
             width: 800px; height: 600px;
             border-radius: 4px;
             overflow: hidden;
+            background: #000;
+        }
+
+        /* Mobil Optimizasyonları */
+        @media (max-width: 900px) {
+            #game-container {
+                width: 100vw;
+                height: 100vh;
+                border: none;
+                border-radius: 0;
+            }
+            #ui {
+                transform: scale(0.9);
+                top: 5px; left: 5px;
+            }
+            #clock {
+                transform: scale(0.8);
+                top: 10px; right: 10px;
+            }
+            #skill-bar {
+                bottom: 10px; right: 10px;
+                transform: scale(1.1);
+            }
+            #inventory-ui, #shop-ui, #stat-ui {
+                width: 90%;
+                left: 5% !important;
+                right: auto !important;
+                top: 50% !important;
+                transform: translateY(-50%) !important;
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+            #mobile-menu-btns {
+                display: flex !important;
+            }
+        }
+
+        #mobile-menu-btns {
+            position: absolute;
+            top: 80px;
+            right: 20px;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .mobile-btn {
+            width: 45px; height: 45px;
+            background: rgba(0,0,0,0.7);
+            border: 2px solid #f1c40f;
+            border-radius: 50%;
+            color: #f1c40f;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 20px; font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
 
         canvas { display: block; }
@@ -225,11 +282,13 @@
 
         /* Mobile Joystick */
         #joystick-container {
-            position: absolute; bottom: 40px; left: 40px;
+            position: absolute;
             width: 120px; height: 120px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.2);
             display: none; touch-action: none; z-index: 1000;
+            pointer-events: none;
+            transition: opacity 0.2s;
         }
         #joystick-knob {
             position: absolute; top: 50%; left: 50%;
@@ -241,8 +300,7 @@
 
         /* Skill Bar */
         #skill-bar {
-            position: absolute; bottom: 20px; left: 50%;
-            transform: translateX(-50%);
+            position: absolute; bottom: 20px; right: 20px;
             display: flex; gap: 10px;
             background: rgba(0,0,0,0.6);
             padding: 8px; border-radius: 8px;
@@ -276,7 +334,7 @@
         }
 
         @media (max-width: 1024px) {
-            #joystick-container { display: block; }
+            #joystick-container { display: none; }
         }
         #clock {
             position: fixed; top: 20px; right: 20px;
@@ -332,25 +390,25 @@
             <span class="stat-name">INT (Zeka)</span>
             <div style="display:flex; align-items:center; gap:10px;">
                 <span class="stat-value" id="stat-int">0</span>
-                <button class="stat-btn" onclick="addStat('int')">+</button>
+                <button class="stat-btn" onclick="addStat('int')" ontouchstart="addStat('int')">+</button>
             </div>
         </div>
         <div class="stat-row">
             <span class="stat-name">HP (Sağlık)</span>
             <div style="display:flex; align-items:center; gap:10px;">
                 <span class="stat-value" id="stat-hp">0</span>
-                <button class="stat-btn" onclick="addStat('hp')">+</button>
+                <button class="stat-btn" onclick="addStat('hp')" ontouchstart="addStat('hp')">+</button>
             </div>
         </div>
         <div class="stat-row">
             <span class="stat-name">DEX (Çeviklik)</span>
             <div style="display:flex; align-items:center; gap:10px;">
                 <span class="stat-value" id="stat-dex">0</span>
-                <button class="stat-btn" onclick="addStat('dex')">+</button>
+                <button class="stat-btn" onclick="addStat('dex')" ontouchstart="addStat('dex')">+</button>
             </div>
         </div>
         <div class="points-text">PUAN: <span id="stat-points">0</span></div>
-        <button class="btn" style="width: 100%; border-color: #3498db; color: #3498db;" onclick="toggleStats()">KAPAT</button>
+        <button class="btn" style="width: 100%; border-color: #3498db; color: #3498db;" onclick="toggleStats()" ontouchstart="toggleStats()">KAPAT</button>
     </div>
 
     <!-- Tooltip -->
@@ -361,7 +419,7 @@
         <div class="inv-header">INVENTORY [I]</div>
         
         <div class="character-preview">
-            <div style="grid-column: 1; grid-row: 1;" class="equip-slot" id="slot-hat" onclick="unequip('hat')">👒</div>
+            <div style="grid-column: 1; grid-row: 1;" class="equip-slot" id="slot-hat" onclick="unequip('hat')" ontouchstart="unequip('hat')">👒</div>
             <div style="grid-column: 1; grid-row: 2;" class="equip-slot">👕</div>
             <div style="grid-column: 1; grid-row: 3;" class="equip-slot">👖</div>
             
@@ -370,7 +428,7 @@
                 <div style="font-size: 50px; filter: drop-shadow(0 0 10px rgba(78, 204, 163, 0.3));">🧙‍♂️</div>
             </div>
             
-            <div style="grid-column: 3; grid-row: 1;" class="equip-slot" id="slot-weapon" onclick="unequip('weapon')">🪄</div>
+            <div style="grid-column: 3; grid-row: 1;" class="equip-slot" id="slot-weapon" onclick="unequip('weapon')" ontouchstart="unequip('weapon')">🪄</div>
             <div style="grid-column: 3; grid-row: 2;" class="equip-slot">🛡️</div>
             <div style="grid-column: 3; grid-row: 3;" class="equip-slot">💍</div>
         </div>
@@ -385,7 +443,7 @@
             </div>
             <div style="color: #aaa; font-size: 10px;">Weight: 12 / 100</div>
         </div>
-        <button class="btn" style="width: 100%; margin-top: 10px; border-color: #5a5e7a; color: #aaa;" onclick="toggleInventory()">CLOSE</button>
+        <button class="btn" style="width: 100%; margin-top: 10px; border-color: #5a5e7a; color: #aaa;" onclick="toggleInventory()" ontouchstart="toggleInventory()">CLOSE</button>
     </div>
 
     <div id="shop-ui">
@@ -393,34 +451,43 @@
         <div id="shop-items">
             <!-- Market Eşyaları JS ile Gelecek -->
         </div>
-        <button class="btn" style="width: 100%; margin-top: 15px;" onclick="toggleShop()">EXIT</button>
+        <button class="btn" style="width: 100%; margin-top: 15px;" onclick="toggleShop()" ontouchstart="toggleShop()">EXIT</button>
     </div>
 
     <div id="overlay">
         <h1 style="color: #c0392b; font-size: 40px;">YOU DIED</h1>
         <p id="overlay-msg" style="color: #aaa;"></p>
-        <button class="btn" style="padding: 10px 30px;" onclick="resetGame()">RESPAWN</button>
+        <button class="btn" style="padding: 10px 30px;" onclick="resetGame()" ontouchstart="resetGame()">RESPAWN</button>
     </div>
 
     <div id="joystick-container">
         <div id="joystick-knob"></div>
     </div>
 
+    <div id="mobile-menu-btns">
+        <div class="mobile-btn" onclick="adjustZoom(0.1)" ontouchstart="adjustZoom(0.1)">🔍+</div>
+        <div class="mobile-btn" onclick="adjustZoom(-0.1)" ontouchstart="adjustZoom(-0.1)">🔍-</div>
+        <div class="mobile-btn" onclick="toggleInventory()" ontouchstart="toggleInventory()">🎒</div>
+        <div class="mobile-btn" onclick="toggleStats()" ontouchstart="toggleStats()">👤</div>
+        <div class="mobile-btn" id="mobile-shop-btn" style="display:none;" onclick="checkShopInteract()" ontouchstart="checkShopInteract()">🏪</div>
+        <div class="mobile-btn" onclick="toggleFullScreen()" ontouchstart="toggleFullScreen()">📺</div>
+    </div>
+
     <div id="skill-bar">
-        <div class="skill-slot" id="skill-1" onclick="castSpecificSkill(0)">
+        <div class="skill-slot" id="skill-1" onclick="castSpecificSkill(0)" ontouchstart="castSpecificSkill(0)">
             <span class="key-hint">1</span>❄️
             <div class="skill-cooldown" id="cd-1"></div>
         </div>
-        <div class="skill-slot" id="skill-2" onclick="castSpecificSkill(1)">
+        <div class="skill-slot" id="skill-2" onclick="castSpecificSkill(1)" ontouchstart="castSpecificSkill(1)">
             <span class="key-hint">2</span>⚡
             <div class="skill-cooldown" id="cd-2"></div>
         </div>
         <!-- Hızlı İksir Slotları -->
-        <div class="skill-slot" id="quick-hp" onclick="useQuickPotion('potion')" style="margin-left: 20px;">
+        <div class="skill-slot" id="quick-hp" onclick="useQuickPotion('potion')" ontouchstart="useQuickPotion('potion')" style="margin-left: 20px;">
             <span class="key-hint">3</span>🧪
             <span class="item-count" id="hp-potion-count">0</span>
         </div>
-        <div class="skill-slot" id="quick-mp" onclick="useQuickPotion('mana_potion')">
+        <div class="skill-slot" id="quick-mp" onclick="useQuickPotion('mana_potion')" ontouchstart="useQuickPotion('mana_potion')">
             <span class="key-hint">4</span>💧
             <span class="item-count" id="mp-potion-count">0</span>
         </div>
@@ -554,9 +621,63 @@
     const joystickKnob = document.getElementById('joystick-knob');
 
     // Ayarlar
-    canvas.width = 800; canvas.height = 600;
     const WORLD_WIDTH = 3200; const WORLD_HEIGHT = 2400;
     const TILE_SIZE = 64;
+
+    function toggleFullScreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => {
+                console.log(`Error: ${err.message}`);
+            });
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+    }
+
+    function adjustZoom(amount) {
+        zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom + amount));
+    }
+
+    // Fare Tekerleği ile Zoom
+    window.addEventListener('wheel', (e) => {
+        if (e.ctrlKey) {
+            e.preventDefault();
+            adjustZoom(e.deltaY > 0 ? -0.1 : 0.1);
+        }
+    }, { passive: false });
+
+    // Dokunmatik Engelleme (Scroll ve Zoom)
+    document.addEventListener('touchstart', (e) => {
+        const target = e.target;
+        if (target.tagName === 'BUTTON' || 
+            target.closest('.grid-slot') || 
+            target.closest('.mobile-btn') || 
+            target.closest('.skill-slot') || 
+            target.closest('.stat-btn') ||
+            target.closest('.equip-slot')) {
+            return;
+        }
+        e.preventDefault();
+    }, { passive: false });
+
+    document.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+    }, { passive: false });
+
+    function resizeCanvas() {
+        const isMobile = window.innerWidth <= 900;
+        if (isMobile) {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        } else {
+            canvas.width = 800;
+            canvas.height = 600;
+        }
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
 
     // Joystick State
     let joystickData = { active: false, x: 0, y: 0, angle: 0, distance: 0 };
@@ -587,6 +708,9 @@
     ];
 
     let camera = { x: 0, y: 0 };
+    let zoom = 1.0;
+    const MIN_ZOOM = 0.5;
+    const MAX_ZOOM = 2.0;
     let player = {
         x: WORLD_WIDTH / 2, y: WORLD_HEIGHT / 2,
         size: 24, speed: 5, 
@@ -1161,11 +1285,38 @@
     });
     window.addEventListener('keyup', e => keys[e.code] = false);
 
-    // Joystick Eventleri
-    joystickContainer.addEventListener('touchstart', (e) => {
-        joystickData.active = true;
-        handleJoystickMove(e.touches[0]);
-    });
+    // Joystick Eventleri (Dinamik)
+    window.addEventListener('touchstart', (e) => {
+        if (!gameActive || isInventoryOpen || isShopOpen) return;
+        
+        // UI elementlerine tıklanmıyorsa joystick'i başlat
+        const target = e.target;
+        if (target.tagName === 'BUTTON' || 
+            target.closest('.grid-slot') || 
+            target.closest('.mobile-btn') || 
+            target.closest('.skill-slot') || 
+            target.closest('.stat-btn') ||
+            target.closest('.equip-slot')) {
+            return;
+        }
+
+        const touch = e.touches[0];
+        // Ekranın sol yarısında mı kontrol et (Dinamik Joystick için)
+        if (touch.clientX < window.innerWidth / 2) {
+            joystickData.active = true;
+            
+            // Joystick'i dokunulan yere taşı (Ekran sınırları kontrolü ile)
+            const joySize = 60; // radius
+            let posX = Math.max(joySize, Math.min(window.innerWidth / 2 - joySize, touch.clientX));
+            let posY = Math.max(joySize, Math.min(window.innerHeight - joySize, touch.clientY));
+
+            joystickContainer.style.display = 'block';
+            joystickContainer.style.left = (posX - joySize) + 'px';
+            joystickContainer.style.top = (posY - joySize) + 'px';
+            
+            handleJoystickMove(touch);
+        }
+    }, { passive: false });
 
     window.addEventListener('touchmove', (e) => {
         if (joystickData.active) {
@@ -1175,10 +1326,13 @@
     }, { passive: false });
 
     window.addEventListener('touchend', () => {
-        joystickData.active = false;
-        joystickData.x = 0;
-        joystickData.y = 0;
-        joystickKnob.style.transform = `translate(-50%, -50%)`;
+        if (joystickData.active) {
+            joystickData.active = false;
+            joystickData.x = 0;
+            joystickData.y = 0;
+            joystickKnob.style.transform = `translate(-50%, -50%)`;
+            joystickContainer.style.display = 'none';
+        }
     });
 
     function handleJoystickMove(touch) {
@@ -1294,6 +1448,7 @@
             if (item) {
                 slot.innerHTML = `<span class="item-icon">${item.icon}</span><span class="item-count">${item.count > 1 ? item.count : ''}</span>`;
                 slot.onclick = () => handleItemAction(index);
+                slot.ontouchstart = (e) => { e.preventDefault(); handleItemAction(index); };
                 slot.onmouseenter = (e) => showTooltip(item, e);
                 slot.onmouseleave = hideTooltip;
             }
@@ -1304,12 +1459,16 @@
         const hatSlot = document.getElementById('slot-hat');
         weaponSlot.innerHTML = player.equipment.weapon ? player.equipment.weapon.icon : '🪄';
         weaponSlot.className = 'equip-slot' + (player.equipment.weapon ? ' active' : '');
+        weaponSlot.onclick = () => unequip('weapon');
+        weaponSlot.ontouchstart = (e) => { e.preventDefault(); unequip('weapon'); };
         if (player.equipment.weapon) {
             weaponSlot.onmouseenter = (e) => showTooltip(player.equipment.weapon, e);
             weaponSlot.onmouseleave = hideTooltip;
         }
         hatSlot.innerHTML = player.equipment.hat ? player.equipment.hat.icon : '👒';
         hatSlot.className = 'equip-slot' + (player.equipment.hat ? ' active' : '');
+        hatSlot.onclick = () => unequip('hat');
+        hatSlot.ontouchstart = (e) => { e.preventDefault(); unequip('hat'); };
         if (player.equipment.hat) {
             hatSlot.onmouseenter = (e) => showTooltip(player.equipment.hat, e);
             hatSlot.onmouseleave = hideTooltip;
@@ -1369,7 +1528,7 @@
         Object.values(ITEM_DB).forEach(item => {
             const div = document.createElement('div');
             div.className = 'shop-item';
-            div.innerHTML = `<div><div style="font-weight:bold;">${item.icon} ${item.name}</div><div style="font-size:10px; color:#f1c40f;">${item.cost} Noah</div></div><button class="btn" onclick="buyItem('${item.id}')">BUY</button>`;
+            div.innerHTML = `<div><div style="font-weight:bold;">${item.icon} ${item.name}</div><div style="font-size:10px; color:#f1c40f;">${item.cost} Noah</div></div><button class="btn" onclick="buyItem('${item.id}')" ontouchstart="buyItem('${item.id}')">BUY</button>`;
             div.onmouseenter = (e) => showTooltip(item, e);
             div.onmouseleave = hideTooltip;
             container.appendChild(div);
@@ -1463,9 +1622,26 @@
         player.x += mx; player.y += my;
         player.x = Math.max(player.size, Math.min(WORLD_WIDTH - player.size, player.x));
         player.y = Math.max(player.size, Math.min(WORLD_HEIGHT - player.size, player.y));
-        camera.x = Math.max(0, Math.min(WORLD_WIDTH - canvas.width, player.x - canvas.width / 2));
-        camera.y = Math.max(0, Math.min(WORLD_HEIGHT - canvas.height, player.y - canvas.height / 2));
-        shopMsg.style.display = Math.hypot(player.x - shopKeeper.x, player.y - shopKeeper.y) < 130 ? 'block' : 'none';
+        
+        // Kamera takibi (Zoom uyumlu ve Dünyayı ortalayan)
+        const viewW = canvas.width / zoom;
+        const viewH = canvas.height / zoom;
+        
+        if (viewW >= WORLD_WIDTH) {
+            camera.x = (WORLD_WIDTH - viewW) / 2;
+        } else {
+            camera.x = Math.max(0, Math.min(WORLD_WIDTH - viewW, player.x - viewW / 2));
+        }
+        
+        if (viewH >= WORLD_HEIGHT) {
+            camera.y = (WORLD_HEIGHT - viewH) / 2;
+        } else {
+            camera.y = Math.max(0, Math.min(WORLD_HEIGHT - viewH, player.y - viewH / 2));
+        }
+        
+        const isNearShop = Math.hypot(player.x - shopKeeper.x, player.y - shopKeeper.y) < 130;
+        shopMsg.style.display = isNearShop ? 'block' : 'none';
+        document.getElementById('mobile-shop-btn').style.display = (isNearShop && window.innerWidth <= 900) ? 'flex' : 'none';
 
         // Toz Hareketi
         particles.forEach(p => {
@@ -1738,28 +1914,33 @@
         const shakeX = (Math.random() - 0.5) * screenShake * 2;
         const shakeY = (Math.random() - 0.5) * screenShake * 2;
         
-        ctx.save(); ctx.translate(-camera.x + shakeX, -camera.y + shakeY);
+        ctx.save();
+        ctx.scale(zoom, zoom);
+        ctx.translate(-camera.x + shakeX, -camera.y + shakeY);
         
+        const viewW = canvas.width / zoom;
+        const viewH = canvas.height / zoom;
         const viewMargin = 100;
         const isVisible = (x, y, size = 0) => {
             return x + size > camera.x - viewMargin && 
-                   x - size < camera.x + canvas.width + viewMargin &&
+                   x - size < camera.x + viewW + viewMargin &&
                    y + size > camera.y - viewMargin && 
-                   y - size < camera.y + canvas.height + viewMargin;
+                   y - size < camera.y + viewH + viewMargin;
         };
 
         // --- 1. Zemin ve Yollar ---
         // Ana zemin rengi
         ctx.fillStyle = '#1b3022';
-        ctx.fillRect(camera.x, camera.y, canvas.width, canvas.height);
+        // Ekran sarsıntısı ve zoom payı için geniş bir alanı boya
+        ctx.fillRect(camera.x - viewMargin, camera.y - viewMargin, viewW + viewMargin * 2, viewH + viewMargin * 2);
         
         // Zemin varyasyonu (Daha doğal görünüm)
         ctx.globalAlpha = 0.3;
         const patchSize = 300;
         const startX = Math.floor(camera.x / patchSize) * patchSize;
         const startY = Math.floor(camera.y / patchSize) * patchSize;
-        for (let i = startX; i < camera.x + canvas.width + patchSize; i += patchSize) {
-            for (let j = startY; j < camera.y + canvas.height + patchSize; j += patchSize) {
+        for (let i = startX; i < camera.x + viewW + patchSize; i += patchSize) {
+            for (let j = startY; j < camera.y + viewH + patchSize; j += patchSize) {
                 if ((i+j) % (patchSize*2) === 0) {
                     ctx.fillStyle = '#16291d';
                     ctx.fillRect(i, j, patchSize, patchSize);
@@ -1793,8 +1974,8 @@
         const grassSpacing = 120;
         const gStartX = Math.floor(camera.x / grassSpacing) * grassSpacing;
         const gStartY = Math.floor(camera.y / grassSpacing) * grassSpacing;
-        for (let i = gStartX; i < camera.x + canvas.width + grassSpacing; i += grassSpacing) {
-            for (let j = gStartY; j < camera.y + canvas.height + grassSpacing; j += grassSpacing) {
+        for (let i = gStartX; i < camera.x + viewW + grassSpacing; i += grassSpacing) {
+            for (let j = gStartY; j < camera.y + viewH + grassSpacing; j += grassSpacing) {
                 let offX = (i * 17) % 50;
                 let offY = (j * 11) % 50;
                 drawGrass(ctx, i + offX, j + offY, 5 + Math.sin(frameCount/20 + i)*2, '#2d4a3e');
@@ -1970,12 +2151,13 @@
         if (hour >= 6 && hour < 18) {
             ctx.globalAlpha = 0.05;
             ctx.fillStyle = '#fff9c4';
-            for(let i=0; i<3; i++) {
+            for(let i=0; i<10; i++) {
+                let startX = Math.floor(camera.x / 400) * 400 + (i * 400);
                 ctx.beginPath();
-                ctx.moveTo(camera.x + 100 + i*300, camera.y);
-                ctx.lineTo(camera.x + 400 + i*300, camera.y);
-                ctx.lineTo(camera.x + 200 + i*300, camera.y + 600);
-                ctx.lineTo(camera.x - 100 + i*300, camera.y + 600);
+                ctx.moveTo(startX + 100, camera.y);
+                ctx.lineTo(startX + 400, camera.y);
+                ctx.lineTo(startX + 200, camera.y + viewH);
+                ctx.lineTo(startX - 100, camera.y + viewH);
                 ctx.fill();
             }
             ctx.globalAlpha = 1.0;
@@ -2011,10 +2193,10 @@
             lctx.fillStyle = `${ambientColor}${ambientAlpha})`;
             lctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Player'ın etrafını "kes" (ışık alanı)
-            const lightX = player.x - camera.x;
-            const lightY = player.y - camera.y;
-            const lightRad = 250;
+            // Player'ın etrafını "kes" (ışık alanı - Zoom uyumlu)
+            const lightX = (player.x - camera.x) * zoom;
+            const lightY = (player.y - camera.y) * zoom;
+            const lightRad = 250 * zoom;
             
             lctx.globalCompositeOperation = 'destination-out';
             const lightGrad = lctx.createRadialGradient(lightX, lightY, 0, lightX, lightY, lightRad);
@@ -2026,7 +2208,7 @@
             // Sahneye uygula
             ctx.drawImage(lightCanvas, 0, 0);
             
-            // Hafif bir sarı ışık halesi ekle
+            // Hafif bir sarı ışık halesi ekle (Zoom uyumlu)
             ctx.globalCompositeOperation = 'screen';
             ctx.globalAlpha = 0.2 * ambientAlpha;
             const glowGrad = ctx.createRadialGradient(lightX, lightY, 0, lightX, lightY, lightRad);
